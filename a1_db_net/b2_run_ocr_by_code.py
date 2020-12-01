@@ -31,6 +31,7 @@ if __name__ == '__main__':
     image = cv2.imread(img_path)
     boxes = [line[0] for line in result]
     for box in result[0]:
+        # 再图上画box
         box = np.reshape(np.array(box), [-1, 1, 2]).astype(np.int64)
         image = cv2.polylines(np.array(image), [box], True, (255, 0, 0), 2)
 

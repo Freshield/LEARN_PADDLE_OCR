@@ -20,7 +20,7 @@ from PaddleOCR.ppocr.modeling.backbones.det_mobilenet_v3 import MobileNetV3
 fake_inputs = paddle.randn([1, 3, 640, 640], dtype='float32')
 
 model_backbone = MobileNetV3()
-# model_backbone.eval()
+model_backbone.eval()
 
 # 输出为所需要的中间输出分别尺度为：
 # 输入为1，3，640，640的情况下

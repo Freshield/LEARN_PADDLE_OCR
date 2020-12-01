@@ -21,13 +21,15 @@ from paddle import ParamAttr
 
 
 class DBFPN(nn.Layer):
-    def __init__(self, in_channels, out_channels, use_asf=False, **kwargs):
+    def __init__(self, in_channels, out_channels):
         """fpn层初始化"""
         super(DBFPN, self).__init__()
+        # 输出的通道数，这里一般为256
         self.out_channels = out_channels
-        self.use_asf = use_asf
+        # 使用凯明的正态分布
         weight_attr = paddle.nn.initializer.KaimingUniform()
-
+        # in开头的就是正常的卷积，保证输入输出大小一样，只是通道数变为了out channels
+        # p开头的是针对上采样后的输出，让通道数变为1/4，这样好进行concat
         self.in2_conv = nn.Conv2D(
             in_channels=in_channels[0],
             out_channels=self.out_channels,
@@ -83,7 +85,7 @@ class DBFPN(nn.Layer):
 
     def forward(self, x):
         """前向过程，这里x为backbone的输出，要分别进行上采样"""
-        # 获取backbone的输出
+        # 获取backbone的输出，160，80，40，20，
         c2, c3, c4, c5 = x
         # 对所有的输入进行一次卷积，用的1x1的卷积，大小一样，
         # 主要是增加channel为out channel数
@@ -92,14 +94,14 @@ class DBFPN(nn.Layer):
         in4 = self.in4_conv(c4)
         in3 = self.in3_conv(c3)
         in2 = self.in2_conv(c2)
-        # 分别进行特征上采样
-        # 1/16大小，256，40，40
+        # 分别进行特征上采样并和对应
+        # 1/16大小，256，40，40，in5为20上采样2倍和in4为40加起来变为40
         out4 = in4 + F.upsample(
             in5, scale_factor=2, mode='nearest', align_mode=1)
-        # 1/8大小，256，80，80
+        # 1/8大小，256，80，80，out4为40上采样2倍和in3为80加起来变为80
         out3 = in3 + F.upsample(
             out4, scale_factor=2, mode='nearest', align_mode=1)
-        # 1/4大小，256，160，160
+        # 1/4大小，256，160，160，out3为80上采样2倍和in2为160加起来为160
         out2 = in2 + F.upsample(
             out3, scale_factor=2, mode='nearest', align_mode=1)
         # 这里在通过一次3x3的卷积，把channel降为out channel的1/4，都是64
