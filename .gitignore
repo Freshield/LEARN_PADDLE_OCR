@@ -5,3 +5,14 @@
 *.png
 *.ttf
 *.TTF
+*.java
+*.cpp
+*.h
+*.c
+*.cc
+*.cu
+*.cmake
+*.gif
+*.svg
+*.GIF
+*.pdf
