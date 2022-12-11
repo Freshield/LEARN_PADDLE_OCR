@@ -16,3 +16,16 @@
 *.svg
 *.GIF
 *.pdf
+*.pyc
+*.md
+*.yaml
+*.yml
+*.xml
+*.jar
+*.PNG
+*.tar
+*.pdparams
+*.json
+*.hpp
+*.ttc
+*.sh
